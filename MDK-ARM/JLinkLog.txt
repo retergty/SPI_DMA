@@ -1,0 +1,93 @@
+T3F50 018:732.988   SEGGER J-Link V7.64 Log File
+T3F50 018:733.034   DLL Compiled: Apr  1 2022 16:04:43
+T3F50 018:733.040   Logging started @ 2022-11-03 13:12
+T3F50 018:733.045 - 18.943ms
+T3F50 018:733.052 JLINK_SetWarnOutHandler(...)
+T3F50 018:733.057 - 0.007ms
+T3F50 018:733.064 JLINK_OpenEx(...)
+T3F50 018:734.031   Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
+T3F50 018:734.388   Firmware: J-Link ARM-OB STM32 compiled Aug 22 2012 19:52:04
+T3F50 018:736.007   Hardware: V7.00
+T3F50 018:736.023   S/N: 20090928
+T3F50 018:736.031   OEM: SEGGER
+T3F50 018:736.038   Feature(s): RDI,FlashDL,FlashBP,JFlash,GDB
+T3F50 018:736.847   TELNET listener socket opened on port 19021
+T3F50 018:741.101   WEBSRV WEBSRV_Init(): Starting webserver thread(s)
+T3F50 018:741.215   WEBSRV Webserver running on local port 19080
+T3F50 018:746.155 - 13.104ms returns "O.K."
+T3F50 018:746.180 JLINK_GetEmuCaps()
+T3F50 018:746.186 - 0.008ms returns 0x88EA5833
+T3F50 018:746.193 JLINK_TIF_GetAvailable(...)
+T3F50 018:746.391 - 0.204ms
+T3F50 018:746.405 JLINK_SetErrorOutHandler(...)
+T3F50 018:746.411 - 0.008ms
+T3F50 018:746.422 JLINK_ExecCommand("ProjectFile = "C:\MDKCODE_H7\01-GPIO\MDK-ARM\JLinkSettings.ini"", ...). 
+T3F50 018:747.379 - 0.963ms returns 0x00
+T3F50 018:747.398 JLINK_ExecCommand("Device = STM32H750VBTx", ...). 
+T3F50 018:750.405   Device "STM32H750VB" selected.
+T3F50 018:750.677 - 3.275ms returns 0x00
+T3F50 018:750.693 JLINK_ExecCommand("DisableConnectionTimeout", ...). 
+T3F50 018:750.702 - 0.004ms returns 0x01
+T3F50 018:750.709 JLINK_GetHardwareVersion()
+T3F50 018:750.714 - 0.008ms returns 70000
+T3F50 018:750.721 JLINK_GetDLLVersion()
+T3F50 018:750.726 - 0.007ms returns 76400
+T3F50 018:750.733 JLINK_GetOEMString(...)
+T3F50 018:750.741 JLINK_GetFirmwareString(...)
+T3F50 018:750.747 - 0.008ms
+T3F50 018:750.757 JLINK_GetDLLVersion()
+T3F50 018:750.762 - 0.007ms returns 76400
+T3F50 018:750.770 JLINK_GetCompileDateTime()
+T3F50 018:750.775 - 0.007ms
+T3F50 018:750.784 JLINK_GetFirmwareString(...)
+T3F50 018:750.789 - 0.007ms
+T3F50 018:750.797 JLINK_GetHardwareVersion()
+T3F50 018:750.802 - 0.011ms returns 70000
+T3F50 018:750.815 JLINK_GetSN()
+T3F50 018:750.820 - 0.008ms returns 20090928
+T3F50 018:750.828 JLINK_GetOEMString(...)
+T3F50 018:750.837 JLINK_TIF_Select(JLINKARM_TIF_SWD)
+T3F50 018:751.342 - 0.513ms returns 0x00
+T3F50 018:751.359 JLINK_HasError()
+T3F50 018:751.368 JLINK_SetSpeed(5000)
+T3F50 018:751.457 - 0.096ms
+T3F50 018:751.825 JLINK_HasError()
+T3F50 018:751.839 JLINK_SetResetType(JLINKARM_RESET_TYPE_NORMAL)
+T3F50 018:751.845 - 0.008ms returns JLINKARM_RESET_TYPE_NORMAL
+T3F50 018:751.852 JLINK_Reset()
+T3F50 018:752.069   ConfigTargetSettings() start
+T3F50 018:752.083    J-Link Script File: Executing ConfigTargetSettings()
+T3F50 018:752.094   ConfigTargetSettings() end
+T3F50 018:753.035   Found SW-DP with ID 0x6BA02477
+T3F50 018:766.419   Found SW-DP with ID 0x6BA02477
+T3F50 018:769.218   Old FW that does not support reading DPIDR via DAP jobs
+T3F50 018:771.925   DPv0 detected
+T3F50 018:771.938   CoreSight SoC-400 or earlier
+T3F50 018:771.946   Scanning AP map to find all available APs
+T3F50 018:775.488   AP[3]: Stopped AP scan as end of AP map has been reached
+T3F50 018:775.501   AP[0]: AHB-AP (IDR: 0x84770001)
+T3F50 018:775.509   AP[1]: AHB-AP (IDR: 0x84770001)
+T3F50 018:775.517   AP[2]: APB-AP (IDR: 0x54770002)
+T3F50 018:775.524   Iterating through AP map to find AHB-AP to use
+T3F50 018:778.590   AP[0]: Core found
+T3F50 018:778.602   AP[0]: AHB-AP ROM base: 0xE00FE000
+T3F50 018:780.070   CPUID register: 0x411FC271. Implementer code: 0x41 (ARM)
+T3F50 018:780.082   Found Cortex-M7 r1p1, Little endian.
+T3F50 018:881.710   -- Max. mem block: 0x00002C18
+T3F50 018:882.585   Looking for J-Link GUI Server exe at: C:\Keil_v5\ARM\Segger\JLinkGUIServer.exe
+T3F50 018:882.677   Looking for J-Link GUI Server exe at: C:\Program Files (x86)\SEGGER\JLink_V512g\\JLinkGUIServer.exe
+T3F50 019:183.845   Failed to connect to J-Link GUI Server.
+T3F50 020:159.070   
+  ***** Error: 
+T3F50 020:159.132   Specific core setup failed.
+T3F50 020:159.143 - 1407.293ms
+T3F50 020:159.528 JLINK_GetId()
+T3F50 020:159.837 - 0.317ms returns 0x6BA02477
+T3F50 020:162.103 JLINK_GetFirmwareString(...)
+T3F50 020:162.120 - 0.020ms
+T18FC 221:057.438   
+  ***** Error: Connection to emulator lost!
+T3F50 455:226.060 JLINK_Close()
+T3F50 455:247.680 - 21.638ms
+T3F50 455:247.703   
+T3F50 455:247.708   Closed

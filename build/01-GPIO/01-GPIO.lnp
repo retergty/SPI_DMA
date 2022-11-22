@@ -1,0 +1,35 @@
+--cpu Cortex-M7.fp.dp --library_type=microlib --scatter "d:/MDKCODE/MDKCODE_H7/SPI_DMA/SPIMY/build/01-GPIO/01-GPIO.sct" --strict --summary_stderr --info summarysizes --map --xref --callgraph --symbols --info sizes --info totals --info unused --info veneers
+--list .\build\01-GPIO\01-GPIO.map
+.\build\01-GPIO\Core\Src\dma.o
+.\build\01-GPIO\Core\Src\gpio.o
+.\build\01-GPIO\Core\Src\main.o
+.\build\01-GPIO\Core\Src\rng.o
+.\build\01-GPIO\Core\Src\spi.o
+.\build\01-GPIO\Core\Src\stm32h7xx_hal_msp.o
+.\build\01-GPIO\Core\Src\stm32h7xx_it.o
+.\build\01-GPIO\Core\Src\system_stm32h7xx.o
+.\build\01-GPIO\Core\Src\timer.o
+.\build\01-GPIO\Drivers\HARDWARE\MPU9250.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_cortex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_dma_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_exti.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_flash.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_flash_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_gpio.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_hsem.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_i2c_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_mdma.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_pwr_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rcc_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_rng_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_spi_ex.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_tim.o
+.\build\01-GPIO\Drivers\STM32H7xx_HAL_Driver\Src\stm32h7xx_hal_tim_ex.o
+.\build\01-GPIO\MDK-ARM\startup_stm32h750xx.o -o .\build\01-GPIO\01-GPIO.axf
