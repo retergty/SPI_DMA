@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-// 定义MPU9250内部寄存器
+// 锟斤拷锟斤拷MPU9250锟节诧拷锟侥达拷锟斤拷
 #define MPU9250_REG_SELF_TEST_X_GYRO    0x00        /**< gyro self test x register */
 #define MPU9250_REG_SELF_TEST_Y_GYRO    0x01        /**< gyro self test y register */
 #define MPU9250_REG_SELF_TEST_Z_GYRO    0x02        /**< gyro self test z register */
@@ -106,9 +106,11 @@
 #define AK8963_REG_ASAZ                 0x12        /**< z axis sensitivity adjustment value register */
 #define AK8963_ADDR             0x0C        /**Address AK8963**/
 #define I2C_READFLAG                     0x80        /**I2C Read Flag**/
-int Init_MPU9250(void);
+int MPU9250_Init(void);
 void MPU9250_Read_Data(uint8_t* DataOut);
 void I2C_Mag_ReadTest(uint8_t* DataOut);
 void MPU9250IntConfig(void);
+void SPI_WriteMPU9250Reg(uint8_t RegAdd, const uint8_t *WriteData, uint32_t size);
+void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t *ReadData, uint32_t size);
 #endif // !__MPU9250_MY
 

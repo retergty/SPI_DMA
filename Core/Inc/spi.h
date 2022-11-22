@@ -41,8 +41,6 @@ extern SPI_HandleTypeDef hspi1;
 void MX_SPI1_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void SPI_WriteMPU9250Reg(uint8_t RegAdd, const uint8_t *WriteData, uint32_t size);
-void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t *ReadData, uint32_t size);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

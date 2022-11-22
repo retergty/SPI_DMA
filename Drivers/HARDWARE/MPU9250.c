@@ -3,8 +3,8 @@
 #include "main.h"
 
 uint8_t Mag_adjust[3] = { 0 };
-volatile uint8_t DataReceive[23] = {1};
-volatile uint8_t DataSend[23] = {MPU9250_REG_ACCEL_XOUT_H | 0x80};
+volatile uint8_t DataReceive[23] __attribute__((section("DMABuff"))) = {0};
+const uint8_t DataSend[23] = { MPU9250_REG_ACCEL_XOUT_H | 0x80 };
 uint32_t SampleInterLast = 0;
 uint32_t SampleInter = 0;
 extern int SPI_REQUEST_Count;
@@ -65,7 +65,7 @@ static uint8_t I2C_Mag_SLV4_Read(uint8_t AK8963Reg)
 	return ReadData;
 
 }
-int Init_MPU9250(void)
+int MPU9250_Init(void)
 {
 	uint8_t WriteData;
 
@@ -75,12 +75,10 @@ int Init_MPU9250(void)
 	SPI_ModifyMPU9250Reg(MPU9250_REG_USER_CTRL, WriteData, WriteData); //设置I2C Master
 	WriteData = 0x4d;
 	SPI_WriteMPU9250Reg(MPU9250_REG_I2C_MST_CTRL, &WriteData, 1); // I2C 400kHZ,同时等待I2C数据全部读取完成后才输出中断
-	/* 	I2C_Mag_Write(AK8963_REG_CNTL1, 0x0); //设置AK8963掉电 */
 	I2C_Mag_SLV4_Write(AK8963_REG_CNTL1, 0x0); //设置AK8963掉电
 	WriteData = 0x80;
 	SPI_WriteMPU9250Reg(MPU9250_REG_PWR_MGMT_1, &WriteData, 1);  //Reset MPU9250
 	HAL_Delay(10);
-	/* 	I2C_Mag_Write(AK8963_REG_CNTL2, 0x01);  //Reset AK8963 */
 	I2C_Mag_SLV4_Write(AK8963_REG_CNTL2, 0x01);
 	WriteData = (1 << 0);
 	SPI_ModifyMPU9250Reg(MPU9250_REG_PWR_MGMT_1, 0x7, WriteData); //设置时钟源
@@ -112,26 +110,14 @@ int Init_MPU9250(void)
 
 	/*************Init MAG*****************/
 
-/* 	I2C_Mag_Read(AK8963_REG_WIA, &WriteData, 1);
-	I2C_Mag_Read(AK8963_REG_WIA, &WriteData, 1); */
 	WriteData = I2C_Mag_SLV4_Read(AK8963_REG_WIA);
 	if (WriteData != 0x48)
 		return 2;
 
-	/* 	I2C_Mag_Write(AK8963_REG_CNTL1, 0x00); //设置AK8963掉电
-		HAL_Delay(100);
-		I2C_Mag_Write(AK8963_REG_CNTL1, 0x0F); //设置AK8963模式为fuse ROM模式
-		HAL_Delay(100);
-		I2C_Mag_Read(AK8963_REG_ASAX, Mag_adjust, 3);
-		I2C_Mag_Write(AK8963_REG_CNTL1, 0x00); //设置AK8963掉电
-		HAL_Delay(100);
-		I2C_Mag_Write(AK8963_REG_CNTL1, 0x16); //设置AK8963模式为continue 2模式
-		HAL_Delay(100); */
 	I2C_Mag_SLV4_Write(AK8963_REG_CNTL1, 0x00); //设置AK8963掉电
 	HAL_Delay(200);
 	I2C_Mag_SLV4_Write(AK8963_REG_CNTL1, 0x0F); //设置AK8963模式为fuse ROM模式
 	HAL_Delay(200);
-	/* 	I2C_Mag_Read(AK8963_REG_ASAX, Mag_adjust, 3); */
 	Mag_adjust[0] = I2C_Mag_SLV4_Read(AK8963_REG_ASAX); //得出AK8963三轴磁力计的校正值
 	Mag_adjust[1] = I2C_Mag_SLV4_Read(AK8963_REG_ASAY);
 	Mag_adjust[2] = I2C_Mag_SLV4_Read(AK8963_REG_ASAZ);
@@ -139,12 +125,6 @@ int Init_MPU9250(void)
 	HAL_Delay(200);
 	I2C_Mag_SLV4_Write(AK8963_REG_CNTL1, 0x16); //设置AK8963模式为continue 2模式
 	HAL_Delay(200);
-	/* 	I2C_Mag_Read(AK8963_REG_CNTL1, &Mag_CNT1T, 1); */
-	/*  Mag_CNT1T = I2C_Mag_SLV4_Read(AK8963_REG_CNTL1);  */  //得出AK8963控制寄存器的值
-		//I2C_Mag_Setting(); //设置MPU9250连读读取并将其存在MPU9250_REG_EXT_SENS_DATA_00
-/* 	SPI_ReadMPU9250Reg(MPU9250_REG_SMPRT_DIV, MPU9250Test, 12);  //测试用测试MPU9250寄存器的值书是否正确
-	SPI_ReadMPU9250Reg(MPU9250_REG_USER_CTRL, MPU9250Test + 12, 2);
-	SPI_ReadMPU9250Reg(MPU9250_REG_I2C_MST_STATUS, MPU9250Test + 14, 1); */
 	WriteData = 0x9;
 	SPI_WriteMPU9250Reg(MPU9250_REG_I2C_SLV4_CTRL, &WriteData, 1); //让MPU9250每10次采样才读取AK8963一次
 	WriteData = 0x1;
@@ -176,7 +156,7 @@ void MPU9250IntConfig(void)
 	GInit.Pull = GPIO_PULLDOWN;
 	GInit.Speed = GPIO_SPEED_FREQ_MEDIUM;
 	HAL_GPIO_Init(GPIOA, &GInit);
-	
+
 	/*配置DMA传输地址*/
 	DMA1_Stream0->M0AR = (uint32_t)DataReceive;
 	DMA1_Stream0->PAR = (uint32_t)&SPI1->RXDR;
@@ -192,11 +172,12 @@ void MPU9250IntConfig(void)
 }
 void EXTI3_IRQHandler(void)
 {
-/* 	SPI_ReadMPU9250Reg(MPU9250_REG_ACCEL_XOUT_H, DataOut, 22);
-	EXTI->PR1 |= 0x1<<3;
-	SPI_REQUEST_Count++;
-	SampleInter = TIM3->CNT - SampleInterLast;
-	SampleInterLast = TIM3->CNT; */
+	/* 	SPI_ReadMPU9250Reg(MPU9250_REG_ACCEL_XOUT_H, DataOut, 22);
+		EXTI->PR1 |= 0x1<<3;
+		SPI_REQUEST_Count++;
+		SampleInter = TIM3->CNT - SampleInterLast;
+		SampleInterLast = TIM3->CNT; */
+	EXTI->PR1 |= (0x1 << 3);   //!@！注意，若是把这一行放在最后，则会重复进入中断，奇怪的芯片
 	if (!FlagDMASuccess)         //DMA传输由于某种原因没有成功，所以需要重新失能DMA SPI1
 	{
 		ErrorCode = SPI_REQUEST_Count;
@@ -210,7 +191,7 @@ void EXTI3_IRQHandler(void)
 	DMA1_Stream1->NDTR = 23;
 
 	SPI1->CFG1 |= 0x1 << 14;
-	
+
 	DMA1_Stream0->CR |= DMA_SxCR_EN;
 	DMA1_Stream1->CR |= DMA_SxCR_EN;
 
@@ -218,8 +199,7 @@ void EXTI3_IRQHandler(void)
 	SPI1->CR2 = 23;
 	SPI1->CR1 |= SPI_CR1_SPE;
 	SPI1->CR1 |= SPI_CR1_CSTART;
-	
-	EXTI->PR1 |= (0x1 << 3);   //!@！注意，若是把这一行放在最后，则会重复进入中断，奇怪的芯片
+
 	SPI_REQUEST_Count++;
 	FlagDMASuccess = 0;
 	SampleInter = TIM3->CNT - SampleInterLast;
@@ -230,12 +210,12 @@ void EXTI3_IRQHandler(void)
 void DMA1_Stream0_IRQHandler(void)
 {
 	DMA1->LIFCR |= (0x1 << 5 | 0x1 << 11);  //清理DMA1 Stream0 与 Stream1 的TC中断位
-	
+
 	DMA1_Stream0->CR &= ~DMA_SxCR_EN;
 	DMA1_Stream1->CR &= ~DMA_SxCR_EN;
-	
-/* 	if (!HAL_IS_BIT_SET(SPI1->SR, SPI_IT_EOT))
-		ErrorCode = -1; */
+
+	if (!HAL_IS_BIT_SET(SPI1->SR, SPI_IT_EOT))
+		ErrorCode = -1;
 	//while (!HAL_IS_BIT_SET(SPI1->SR, SPI_IT_EOT));
 	SPI1->CR1 &= ~SPI_CR1_SPE;
 	SPI1->CFG1 &= ~(0x3 << 14);
@@ -248,3 +228,79 @@ void DMA1_Stream0_IRQHandler(void)
 	FlagDMASuccess = 1;
 }
 
+void SPI_WriteMPU9250Reg(uint8_t RegAdd, const uint8_t* WriteData, uint32_t size)
+{
+
+	/* Set the number of data at current transfer */
+	hspi1.Instance->CR2 = size + 1;
+
+	/* Enable SPI peripheral */
+	__HAL_SPI_ENABLE(&hspi1);
+
+	/* Master transfer start */
+	SET_BIT(hspi1.Instance->CR1, SPI_CR1_CSTART);
+
+	*((__IO uint8_t*) & hspi1.Instance->TXDR) = RegAdd;
+
+	while (size > 0)
+	{
+		if (__HAL_SPI_GET_FLAG(&hspi1, SPI_FLAG_TXP))
+		{
+			*((__IO uint8_t*) & hspi1.Instance->TXDR) = *WriteData;
+			WriteData += 1;
+			size--;
+		}
+	}
+
+	while (!__HAL_SPI_GET_FLAG(&hspi1, SPI_FLAG_EOT))
+		;
+	__HAL_SPI_DISABLE(&hspi1);
+	__HAL_SPI_CLEAR_EOTFLAG(&hspi1);
+	__HAL_SPI_CLEAR_TXTFFLAG(&hspi1);
+	__HAL_SPI_CLEAR_OVRFLAG(&hspi1);
+
+}
+
+void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t* ReadData, uint32_t ReadSize)
+{
+	uint32_t SendSize = ReadSize;
+	hspi1.Instance->CR2 = ReadSize + 1;
+	__HAL_SPI_ENABLE(&hspi1);
+	/* Master transfer start */
+	SET_BIT(hspi1.Instance->CR1, SPI_CR1_CSTART);
+
+	*((__IO uint8_t*) & hspi1.Instance->TXDR) = (uint8_t)(RegAdd | 0x80);
+	while (!__HAL_SPI_GET_FLAG(&hspi1, SPI_FLAG_RXP))
+		;
+
+	*ReadData = *((__IO uint8_t*) & hspi1.Instance->RXDR);
+
+	while ((SendSize > 0) || (ReadSize > 0))
+	{
+		/* Check the TXP flag */
+		if ((__HAL_SPI_GET_FLAG(&hspi1, SPI_FLAG_TXP)) && (SendSize > 0))
+		{
+			*((__IO uint8_t*) & hspi1.Instance->TXDR) = (uint8_t)0x01;
+			SendSize--;
+			__DSB();
+			__ISB();
+		}
+
+		/* Check the RXP flag */
+		if ((__HAL_SPI_GET_FLAG(&hspi1, SPI_FLAG_RXP)) && (ReadSize > 0))
+		{
+			*ReadData = *((__IO uint8_t*) & hspi1.Instance->RXDR);
+			ReadSize--;
+			ReadData += 1;
+			__DSB();
+			__ISB();
+		}
+	}
+
+	while (!__HAL_SPI_GET_FLAG(&hspi1, SPI_FLAG_EOT))
+		;
+	__HAL_SPI_DISABLE(&hspi1);
+	__HAL_SPI_CLEAR_EOTFLAG(&hspi1);
+	__HAL_SPI_CLEAR_TXTFFLAG(&hspi1);
+
+}

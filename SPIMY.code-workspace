@@ -7,7 +7,8 @@
     "settings": {
         "files.associations": {
             "dam.h": "c",
-            "dma.h": "c"
+            "dma.h": "c",
+            "spi.h": "c"
         }
     },
     "extensions": {}
