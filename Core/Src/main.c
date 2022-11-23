@@ -98,12 +98,9 @@ int main(void)
   
   MX_GPIO_Init();
   MX_RNG_Init();
-  MX_DMA_Init();
-  MX_SPI1_Init();
   Timer3Init(240 - 1, 65536 - 1);
   /* USER CODE BEGIN 2 */
-  Flag = MPU9250_Init();
-  MPU9250_IntConfig();
+  Flag = MPU9250_TopInit();   //初始化MPU9250
   /* USER CODE END 2 */
 
   /* Infinite loop */

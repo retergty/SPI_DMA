@@ -111,6 +111,7 @@ void MPU9250_Read_Data(uint8_t* DataOut);
 void I2C_Mag_ReadTest(uint8_t* DataOut);
 void MPU9250_IntConfig(void);
 void SPI_WriteMPU9250Reg(uint8_t RegAdd, const uint8_t *WriteData, uint32_t size);
-void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t *ReadData, uint32_t size);
+void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t* ReadData, uint32_t size);
+int MPU9250_TopInit(void);    //使能所有与MPU9250通信有关的外设，包括SPI，DMA，还有中断的初始化，GPIO的初始化,MPU9250本身芯片的初始化.
 #endif // !__MPU9250_MY
 

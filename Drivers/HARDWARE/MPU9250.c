@@ -1,7 +1,7 @@
 #include "MPU9250.h"
 #include "spi.h"
 #include "main.h"
-
+#include "dma.h"
 uint8_t Mag_adjust[3] = { 0 };
 volatile uint8_t DataReceive[23] __attribute__((section("DMABuff"))) = {0};
 const uint8_t DataSend[23] = { MPU9250_REG_ACCEL_XOUT_H | 0x80 };
@@ -10,20 +10,7 @@ uint32_t SampleInter = 0;
 extern int SPI_REQUEST_Count;
 volatile uint8_t FlagDMASuccess = 0;
 int ErrorCode = 0;
-static void I2C_Mag_Read(uint8_t reg, uint8_t* ReadData, uint8_t size)
-{
-	uint8_t WriteData[2];
-	WriteData[0] = AK8963_ADDR | I2C_READFLAG;
-	WriteData[1] = reg;
-	SPI_WriteMPU9250Reg(MPU9250_REG_I2C_SLV0_ADDR, WriteData, 2);
-	WriteData[0] = 0x80 | size;
-	SPI_WriteMPU9250Reg(MPU9250_REG_I2C_SLV0_CTRL, WriteData, 1);
-	HAL_Delay(10);
-	WriteData[0] = 0x00;
-	SPI_WriteMPU9250Reg(MPU9250_REG_I2C_SLV0_CTRL, WriteData, 1); //失能SLAVE 0
-	HAL_Delay(2);
-	SPI_ReadMPU9250Reg(MPU9250_REG_EXT_SENS_DATA_00, ReadData, size);
-}
+
 static void I2C_Mag_Setting()
 {
 	uint8_t WritaData[3];
@@ -133,18 +120,6 @@ int MPU9250_Init(void)
 	MODIFY_REG(hspi1.Instance->CFG1, 0x7 << 28, SPI_BAUDRATEPRESCALER_16);  //提高SPI速度
 	return 0;
 }
-void MPU9250_Read_Data(uint8_t* DataOut)
-{
-	SPI_ReadMPU9250Reg(MPU9250_REG_ACCEL_XOUT_H, DataOut, 22);
-}
-void I2C_Mag_ReadTest(uint8_t* DataOut)
-{
-	I2C_Mag_Read(AK8963_REG_ST1, DataOut, 8);
-	HAL_Delay(1000);
-	I2C_Mag_Read(AK8963_REG_CNTL1, DataOut, 1);
-	HAL_Delay(1000);
-	I2C_Mag_Read(AK8963_REG_HXH, DataOut, 6);
-}
 /* 配置PA3作为MPU9250中断的输入引脚 配置DMA1 Stream0<-->SPI1 RX  DMA1 Stream1<-->SPI1 TX*/
 void MPU9250_IntConfig(void)
 {
@@ -187,22 +162,22 @@ void EXTI3_IRQHandler(void)
 		SPI1->CR1 &= ~SPI_CR1_SPE;
 		SPI1->CFG1 &= ~(0x3 << 14);  //清除SPI TXDMA RXDMA位
 	}
-	DMA1_Stream0->NDTR = 23;
+	DMA1_Stream0->NDTR = 23;    //给DMA设置传输的数据量
 	DMA1_Stream1->NDTR = 23;
 
-	SPI1->CFG1 |= 0x1 << 14;
+	SPI1->CFG1 |= 0x1 << 14;		//使能SPI RX Request 参考Reference Manual 
 
-	DMA1_Stream0->CR |= DMA_SxCR_EN;
+	DMA1_Stream0->CR |= DMA_SxCR_EN;  //使能DMA1 DMA2相应的通道
 	DMA1_Stream1->CR |= DMA_SxCR_EN;
 
-	SPI1->CFG1 |= (0x1 << 15);
-	SPI1->CR2 = 23;
-	SPI1->CR1 |= SPI_CR1_SPE;
-	SPI1->CR1 |= SPI_CR1_CSTART;
+	SPI1->CFG1 |= (0x1 << 15);    //使能SPI TX Request
+	SPI1->CR2 = 23;              //设置SPI传输的数量
+	SPI1->CR1 |= SPI_CR1_SPE;   //使能SPI
+	SPI1->CR1 |= SPI_CR1_CSTART;  //开启传输
 
-	SPI_REQUEST_Count++;
-	FlagDMASuccess = 0;
-	SampleInter = TIM3->CNT - SampleInterLast;
+	SPI_REQUEST_Count++;      //计数器
+	FlagDMASuccess = 0;       //清除成功位
+	SampleInter = TIM3->CNT - SampleInterLast;   //计时器
 	SampleInterLast = TIM3->CNT;
 
 }
@@ -211,21 +186,20 @@ void DMA1_Stream0_IRQHandler(void)
 {
 	DMA1->LIFCR |= (0x1 << 5 | 0x1 << 11);  //清理DMA1 Stream0 与 Stream1 的TC中断位
 
-	DMA1_Stream0->CR &= ~DMA_SxCR_EN;
+	DMA1_Stream0->CR &= ~DMA_SxCR_EN;    //失能DMA1 DMA2
 	DMA1_Stream1->CR &= ~DMA_SxCR_EN;
 
-	if (!HAL_IS_BIT_SET(SPI1->SR, SPI_IT_EOT))
+	if (!HAL_IS_BIT_SET(SPI1->SR, SPI_IT_EOT))   //要是SPI没有传输完成，输出错误
 		ErrorCode = -1;
 	//while (!HAL_IS_BIT_SET(SPI1->SR, SPI_IT_EOT));
-	SPI1->CR1 &= ~SPI_CR1_SPE;
-	SPI1->CFG1 &= ~(0x3 << 14);
-	SET_BIT(SPI1->IFCR, SPI_IFCR_EOTC | SPI_IFCR_TXTFC);
+	SPI1->CR1 &= ~SPI_CR1_SPE;                    //失能SPI
+	SPI1->CFG1 &= ~(0x3 << 14);										//失能SPI DMA Request
+	SET_BIT(SPI1->IFCR, SPI_IFCR_EOTC | SPI_IFCR_TXTFC);  //清除SPI EOT TXTF 位
 
-	if ((DMA1_Stream0->CR & DMA_SxCR_EN) || (DMA1_Stream1->CR & DMA_SxCR_EN))
+	if ((DMA1_Stream0->CR & DMA_SxCR_EN) || (DMA1_Stream1->CR & DMA_SxCR_EN))  //要是DMA没有被失能，输出错误
 		ErrorCode = -2;
-
-
-	FlagDMASuccess = 1;
+	
+	FlagDMASuccess = 1;                                        //标志位，标记在此次传输中，DMA成功发送接收完成，并被失能
 }
 
 void SPI_WriteMPU9250Reg(uint8_t RegAdd, const uint8_t* WriteData, uint32_t size)
@@ -303,4 +277,16 @@ void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t* ReadData, uint32_t ReadSize)
 	__HAL_SPI_CLEAR_EOTFLAG(&hspi1);
 	__HAL_SPI_CLEAR_TXTFFLAG(&hspi1);
 
+}
+/*
+使用资源 DMA1_Stream0 DMA1_Stream1 SPI1 EXTI3 GPIO端口 PA4 PA5 PA6 PA7 PA3 
+*/
+int MPU9250_TopInit(void)
+{
+	int Flag;
+	MX_DMA_Init();
+	MX_SPI1_Init();
+	Flag = MPU9250_Init();
+	MPU9250_IntConfig();
+	return Flag;
 }

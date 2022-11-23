@@ -8,7 +8,8 @@
         "files.associations": {
             "dam.h": "c",
             "dma.h": "c",
-            "spi.h": "c"
+            "spi.h": "c",
+            "mpu9250.h": "c"
         }
     },
     "extensions": {}
