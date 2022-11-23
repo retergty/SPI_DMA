@@ -103,7 +103,7 @@ int main(void)
   Timer3Init(240 - 1, 65536 - 1);
   /* USER CODE BEGIN 2 */
   Flag = MPU9250_Init();
-  MPU9250IntConfig();
+  MPU9250_IntConfig();
   /* USER CODE END 2 */
 
   /* Infinite loop */

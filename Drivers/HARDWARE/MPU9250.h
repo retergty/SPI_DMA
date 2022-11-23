@@ -109,7 +109,7 @@
 int MPU9250_Init(void);
 void MPU9250_Read_Data(uint8_t* DataOut);
 void I2C_Mag_ReadTest(uint8_t* DataOut);
-void MPU9250IntConfig(void);
+void MPU9250_IntConfig(void);
 void SPI_WriteMPU9250Reg(uint8_t RegAdd, const uint8_t *WriteData, uint32_t size);
 void SPI_ReadMPU9250Reg(uint8_t RegAdd, uint8_t *ReadData, uint32_t size);
 #endif // !__MPU9250_MY

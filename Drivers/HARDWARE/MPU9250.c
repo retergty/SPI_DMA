@@ -146,7 +146,7 @@ void I2C_Mag_ReadTest(uint8_t* DataOut)
 	I2C_Mag_Read(AK8963_REG_HXH, DataOut, 6);
 }
 /* 配置PA3作为MPU9250中断的输入引脚 配置DMA1 Stream0<-->SPI1 RX  DMA1 Stream1<-->SPI1 TX*/
-void MPU9250IntConfig(void)
+void MPU9250_IntConfig(void)
 {
 	GPIO_InitTypeDef GInit;
 	__HAL_RCC_GPIOA_CLK_ENABLE();
